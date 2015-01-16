@@ -41,19 +41,19 @@ void generate_data( int n, vector<int > &data, int ntypes=17){
 }
 
 int compute_cost(vector<int> & data, Config &types, int params){
-    int total_time = 0, elements_on_line = 1;
-    vector<int> assembly_line = vector<int>();
-    assembly_line.resize(params, -1);
-    assembly_line[0] = data[0];
-
+    int total_time = 0, elements_on_line = 1, idx =0;
     auto comp = [] (tuple<int,int> &a, tuple<int,int> &b) -> bool { return get<1>(a) < get<1>(b); };
     std::priority_queue<tuple<int,int>,std::vector<tuple<int,int>>, decltype(comp) > pq (comp);
 
-    pq.push(make_tuple(0,types[data[0]][0]));
+    vector<int> assembly_line = vector<int>();
+    assembly_line.resize(params, -1);
+
+    assembly_line[0] = data[idx];
+    pq.push(make_tuple(0,types[data[idx++]][0]));
 
     while( elements_on_line > 0){
         //Print how out line looks atm
-        cout<<"-------\n";
+        cout<<"-------("<<idx<<", "<<pq.size()<<")\n";
         for(int i: assembly_line){
             cout<<i<<endl;
         }
@@ -61,13 +61,19 @@ int compute_cost(vector<int> & data, Config &types, int params){
         //We are looking for first element who can move
         //because other platform can be blocked.
         tuple<int, int> a = make_tuple(-1, -1);
+        vector<tuple<int,int>> removed_el = vector<tuple<int,int>>();
         while(!pq.empty()){
             a = pq.top();
             pq.pop();
-            if(get<0>(a) + 1 == params || assembly_line[get<0>(a)] == -1){
+            if(get<0>(a) + 1 == params || assembly_line[get<0>(a) + 1 ] == -1){
+                for( auto i: removed_el){
+                    pq.push(i);
+                }
                 break;
             }
+            removed_el.push_back(a);
         }
+
         total_time += get<1>(a);
         if(get<0>(a) + 1 == params){
             elements_on_line--;
@@ -76,13 +82,23 @@ int compute_cost(vector<int> & data, Config &types, int params){
             pq.push(make_tuple(get<0>(a)+1,types[data[assembly_line[get<0>(a)]]][get<0>(a)+1]));
         }
         assembly_line[get<0>(a)]  = -1;
+
+        // we move elements
+        /*
+        * TODO
+        */
+        if(assembly_line[0] == -1 && idx < data.size() ){
+            assembly_line[0] = data[idx];
+            pq.push(make_tuple(0,types[data[idx++]][0]));
+            elements_on_line++;
+        }
     }
     return total_time;
 }
 
 int main(){
     srand( time( NULL ) );
-    int ntypes= 1/*-1*/, params = 3;
+    int ntypes= 3/*-1*/, params = 3;
 
     Config types = Config();
     generate_types(types, ntypes, params);
