@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <queue>
+#include <tuple>
 #include <cstdlib>
 #include <cstdio>
 #include <ctime>
@@ -38,18 +40,49 @@ void generate_data( int n, vector<int > &data, int ntypes=17){
     }
 }
 
-int compute_cost(vector<int> &data, Config &types, int params){
-    int total_time = 0;
+int compute_cost(vector<int> & data, Config &types, int params){
+    int total_time = 0, elements_on_line = 1;
     vector<int> assembly_line = vector<int>();
-    while( assembly_line.size() > 0){
+    assembly_line.resize(params, -1);
+    assembly_line[0] = data[0];
 
+    auto comp = [] (tuple<int,int> &a, tuple<int,int> &b) -> bool { return get<1>(a) < get<1>(b); };
+    std::priority_queue<tuple<int,int>,std::vector<tuple<int,int>>, decltype(comp) > pq (comp);
+
+    pq.push(make_tuple(0,types[data[0]][0]));
+
+    while( elements_on_line > 0){
+        //Print how out line looks atm
+        cout<<"-------\n";
+        for(int i: assembly_line){
+            cout<<i<<endl;
+        }
+        cout<<"-------\n";
+        //We are looking for first element who can move
+        //because other platform can be blocked.
+        tuple<int, int> a = make_tuple(-1, -1);
+        while(!pq.empty()){
+            a = pq.top();
+            pq.pop();
+            if(get<0>(a) + 1 == params || assembly_line[get<0>(a)] == -1){
+                break;
+            }
+        }
+        total_time += get<1>(a);
+        if(get<0>(a) + 1 == params){
+            elements_on_line--;
+        }else{
+            assembly_line[get<0>(a) + 1] = assembly_line[get<0>(a)];
+            pq.push(make_tuple(get<0>(a)+1,types[data[assembly_line[get<0>(a)]]][get<0>(a)+1]));
+        }
+        assembly_line[get<0>(a)]  = -1;
     }
     return total_time;
 }
 
 int main(){
     srand( time( NULL ) );
-    int ntypes= 5/*-1*/, params = 3;
+    int ntypes= 1/*-1*/, params = 3;
 
     Config types = Config();
     generate_types(types, ntypes, params);
