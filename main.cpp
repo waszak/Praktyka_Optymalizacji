@@ -82,7 +82,7 @@ void generate_permutation(vector<vector<double>> &ant_graph, vector<int> &perm){
     }
 
 }
-int compute_cost(vector<int> & data, Config &types, int params, int computers_on_palet=10, int workers = 10){
+int compute_cost(vector<int> & data, Config &types, int params, int computers_on_palet=1, int workers = 10){
     int total_time = 0, elements_on_line = 1, idx =0;
     auto comp = [] (tuple<int,int> &a, tuple<int,int> &b) -> bool { return get<1>(a) < get<1>(b); };
     priority_queue<tuple<int,int>,std::vector<tuple<int,int>>, decltype(comp) > pq (comp);
@@ -91,6 +91,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
     vector<int> assembly_times_line = vector<int>();
     vector<int> assembly_computers_on_line = vector<int>();
     vector<int> assembly_workers_on_line_line = vector<int>();
+    vector<int> need_workers = vector<int>();
 
     assembly_line.resize(params, -1);
     assembly_times_line.resize(params,0);
@@ -105,6 +106,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
         workers --;
     }while ( assembly_computers_on_line[0] < computers_on_palet && idx < data.size() && data[idx] == assembly_line[0]);
 
+    assembly_times_line[0] /= assembly_workers_on_line_line[0];
     pq.push(make_tuple(0,assembly_times_line[0]));
 
     while( elements_on_line > 0){
@@ -113,7 +115,8 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
         cout<<"-------("<<idx<<", "<<elements_on_line<<", "<<workers<<")\n";
         int j = 0;
         for(int i: assembly_line){
-            cout<<((i == -1)?-1:assembly_times_line[j])<<" "<< i<<" "<<assembly_workers_on_line_line[j++]<<endl;
+            cout<<((i == -1)?-1:assembly_times_line[j])<<" "<< i<<" "<<assembly_workers_on_line_line[j]<<endl;
+            j++;
         }
         cout<<"-------\n";
         //We are looking for time of first element who can move
@@ -153,10 +156,14 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                 assembly_line[params - i] = assembly_line[params-i-1 ];
                 assembly_computers_on_line[params - i] = assembly_computers_on_line[params - i - 1];
                 assembly_times_line[params -i] = types[assembly_line[params-i]][params-i] * assembly_computers_on_line[params - i];
-                pq.push(make_tuple(params-i, assembly_times_line[params -i] ));
+                //pq.push(make_tuple(params-i, assembly_times_line[params -i] ));
+                need_workers.push_back(params -i);
+
                 assembly_line[params-i-1 ]  = -1;
                 assembly_times_line[params -i-1] = 0;
                 assembly_computers_on_line[params -i-1]  = 0;
+                workers += assembly_workers_on_line_line[params -i - 1];
+                assembly_workers_on_line_line[params-i - 1] = 0;
             }else{
                 assembly_times_line[params-i-1] =0;
                 pq.push(make_tuple(params-i-1, assembly_times_line[params-i-1]));
@@ -178,8 +185,23 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                 assembly_computers_on_line[0] += 1;
             }while ( assembly_computers_on_line[0] < computers_on_palet && idx < data.size() && data[idx] == assembly_line[0]);
 
-            pq.push(make_tuple(0,assembly_times_line[0]));
+            //pq.push(make_tuple(0,assembly_times_line[0]));
+            need_workers.push_back(0);
             elements_on_line++;
+        }
+
+        while(need_workers.size()>0){
+            int i = need_workers.back();
+            if( workers > 0){
+                assembly_workers_on_line_line[i]++;
+                workers--;
+                assembly_times_line[i] /= assembly_workers_on_line_line[i];
+                pq.push(make_tuple(i,assembly_times_line[i]));
+                need_workers.pop_back();
+            }
+            else{
+                break;
+            }
         }
     }
     return total_time;
