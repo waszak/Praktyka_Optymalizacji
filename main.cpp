@@ -63,8 +63,9 @@ void generate_permutation(vector<vector<double>> &ant_graph, vector<int> &perm){
 
         int selected;
         in_range(nbr, 0, remaining.size()){
-            if(ant_graph[perm[i]][nbr] * mult < r){
-                selected = nbr;
+            if(ant_graph[perm[i]][remaining[nbr]] * mult < r){
+                selected = remaining[nbr];
+                remaining.erase(remaining.begin()+nbr);
                 break;
             }
         }
@@ -227,17 +228,29 @@ int main(){
     cout<<"Cost of permutation\n"<< compute_cost(x, types, params)<<endl;
 
     int gsize = x.size();
-    vector<vector<double>> ant_graph(gsize);
-    in_range(i, 0, gsize){
-        ant_graph[i] = vector<double>(gsize, 1.0);
-    }
+//    vector<vector<double>> ant_graph(gsize);
+//    in_range(i, 0, gsize){
+//        ant_graph[i] = vector<double>(gsize, 1.0);
+//    }
+
+    vector<vector<double>> ant_graph = {
+        { 1.0, 1.2, 1.6, 1.4, 2.8, 4.7, 1.15, 1.7},
+        { 0, 1.0, 1.4, 2.7, 1.2, 1.8, 3.2, 1.6 },
+        { 0, 1.3, 1.0, 4.5, 2.1, 1.7, 1.2, 2.8},
+        { 0, 4.8, 1.5, 1.0, 2.1, 1.8, 2.1, 3.3},
+        { 0, 1.7, 4.8, 2.1, 1.0, 1.6, 2,4, 1.9},
+        { 0, 1.3, 1,8, 2.1, 5.2, 1.7, 2.2, 1.65},
+        { 0, 1.7, 1.8, 2.0, 2.2, 1.75, 4.85, 1.9},
+        { 0, 1.9, 2.2, 1.1, 1.65, 2.15, 2.0, 4.18}
+    };
 
     for(vector<double> r : ant_graph){
         for(int c : r) cout << c;
         cout << endl;
     }
 
-    vector<int> perm = vector<int>(gsize);
+    //vector<int> perm = vector<int>(gsize);
+    vector<int> perm = vector<int>(8);
     generate_permutation(ant_graph, perm);
 
     return 0;
