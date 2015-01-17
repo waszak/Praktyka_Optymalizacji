@@ -56,7 +56,7 @@ int compute_cost(vector<int> & data, Config &types, int params){
 
     while( elements_on_line > 0){
         //Print how out line looks atm
-        cin.get();
+        //cin.get();
         cout<<"-------("<<idx<<", "<<elements_on_line<<")\n";
         int j = 0;
         for(int i: assembly_line){
@@ -101,7 +101,7 @@ int compute_cost(vector<int> & data, Config &types, int params){
                 assembly_line[params-i-1 ]  = -1;
                 assembly_times_line[params -i-1] = 0;
             }else{
-                assembly_times_line[params-i-1] =- get<1>(a);
+                assembly_times_line[params-i-1] =0;//- get<1>(a);
                 pq.push(make_tuple(params-i-1, assembly_times_line[params-i-1]));
             }
 
