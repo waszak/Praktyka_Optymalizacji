@@ -53,7 +53,7 @@ int compute_cost(vector<int> & data, Config &types, int params){
 
     while( elements_on_line > 0){
         //Print how out line looks atm
-        cin.get();
+        //cin.get();
         cout<<"-------("<<idx<<", "<<elements_on_line<<")\n";
         for(int i: assembly_line){
             cout<<i<<endl;
