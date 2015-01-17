@@ -55,8 +55,9 @@ int compute_cost(vector<int> & data, Config &types, int params){
         //Print how out line looks atm
         //cin.get();
         cout<<"-------("<<idx<<", "<<elements_on_line<<")\n";
+        int j = 0;
         for(int i: assembly_line){
-            cout<<i<<endl;
+            cout<<((i == -1)?-1:types[i][j++])<<" "<< i<<endl;
         }
         cout<<"-------\n";
         //We are looking for time of first element who can move
@@ -116,7 +117,7 @@ int compute_cost(vector<int> & data, Config &types, int params){
 
 int main(){
     srand( time( NULL ) );
-    int ntypes= 3/*-1*/, params = 3;
+    int ntypes= 2/*-1*/, params = 3;
 
     Config types = Config();
     generate_types(types, ntypes, params);
