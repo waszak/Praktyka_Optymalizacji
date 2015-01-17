@@ -82,7 +82,7 @@ void generate_permutation(vector<vector<double>> &ant_graph, vector<int> &perm){
     }
 
 }
-int compute_cost(vector<int> & data, Config &types, int params, int computers_on_palet=1, int workers = 10){
+int compute_cost(vector<int> & data, Config &types, int params, int computers_on_palet=10, int workers = 10){
     int total_time = 0, elements_on_line = 1, idx =0;
     auto comp = [] (tuple<int,int> &a, tuple<int,int> &b) -> bool { return get<1>(a) < get<1>(b); };
     priority_queue<tuple<int,int>,std::vector<tuple<int,int>>, decltype(comp) > pq (comp);
