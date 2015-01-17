@@ -137,5 +137,16 @@ int main(){
     }
 
     cout<<"Cost of permutation\n"<< compute_cost(x, types, params)<<endl;
+
+    vector<vector<int>> ant_graph(x.size());
+    in_range(i, 0, ant_graph.size()){
+        ant_graph[i] = vector<int>(x.size(), 1);
+    }
+
+    for(vector<int> r : ant_graph){
+        for(int c : r) cout << c;
+        cout << endl;
+    }
+
     return 0;
 }
