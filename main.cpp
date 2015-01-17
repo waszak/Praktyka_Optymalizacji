@@ -156,7 +156,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                 assembly_line[params - i] = assembly_line[params-i-1 ];
                 assembly_computers_on_line[params - i] = assembly_computers_on_line[params - i - 1];
                 assembly_times_line[params -i] = types[assembly_line[params-i]][params-i] * assembly_computers_on_line[params - i];
-                //pq.push(make_tuple(params-i, assembly_times_line[params -i] ));
+
                 need_workers.push_back(params -i);
 
                 assembly_line[params-i-1 ]  = -1;
@@ -184,13 +184,11 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                 assembly_times_line[0] += types[assembly_line[0]][0];
                 assembly_computers_on_line[0] += 1;
             }while ( assembly_computers_on_line[0] < computers_on_palet && idx < data.size() && data[idx] == assembly_line[0]);
-
-            //pq.push(make_tuple(0,assembly_times_line[0]));
             need_workers.push_back(0);
             elements_on_line++;
         }
 
-        while(need_workers.size()>0){
+        /*while(need_workers.size()>0){
             int i = need_workers.back();
             if( workers > 0){
                 assembly_workers_on_line_line[i]++;
@@ -201,6 +199,24 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
             }
             else{
                 break;
+            }
+        }*/
+        while( workers > 0){
+            bool need_worker = false;
+            int pos = -1;
+            for(int i : need_workers){
+                pos = i;
+                need_worker = true;
+            }
+            if(! need_worker){
+                break;
+            }
+            assembly_workers_on_line_line[need_workers[pos]]++;
+            if (assembly_workers_on_line_line[need_workers[pos]] == assembly_computers_on_line[need_workers[pos]]){
+                swap(need_workers[pos], need_workers.back());
+                need_workers.pop_back();
+                assembly_times_line[pos] /= assembly_workers_on_line_line[pos];
+                pq.push(make_tuple(pos,assembly_times_line[pos]));
             }
         }
     }
