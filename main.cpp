@@ -40,18 +40,24 @@ void generate_data( int n, vector<int > &data, int ntypes=17){
     }
 }
 
-int compute_cost(vector<int> & data, Config &types, int params){
+int compute_cost(vector<int> & data, Config &types, int params, int computers_on_palet=10){
     int total_time = 0, elements_on_line = 1, idx =0;
     auto comp = [] (tuple<int,int> &a, tuple<int,int> &b) -> bool { return get<1>(a) < get<1>(b); };
     priority_queue<tuple<int,int>,std::vector<tuple<int,int>>, decltype(comp) > pq (comp);
 
     vector<int> assembly_line = vector<int>();
     vector<int> assembly_times_line = vector<int>();
+    vector<int> assembly_computers_on_line = vector<int>();
     assembly_line.resize(params, -1);
     assembly_times_line.resize(params,0);
+    assembly_computers_on_line.resize(params,0);
 
-    assembly_line[0] = data[idx++];
-    assembly_times_line[0] = types[assembly_line[0]][0];
+    do{
+        assembly_line[0] = data[idx++];
+        assembly_times_line[0] += types[assembly_line[0]][0];
+        assembly_computers_on_line[0] += 1;
+    }while ( assembly_computers_on_line[0] < computers_on_palet && idx < data.size() && data[idx] == assembly_line[0]);
+
     pq.push(make_tuple(0,assembly_times_line[0]));
 
     while( elements_on_line > 0){
@@ -96,12 +102,14 @@ int compute_cost(vector<int> & data, Config &types, int params){
             }
             if(assembly_line[params-i ] == -1) {
                 assembly_line[params - i] = assembly_line[params-i-1 ];
-                assembly_times_line[params -i] = types[assembly_line[params-i]][params-i];
+                assembly_computers_on_line[params - i] = assembly_computers_on_line[params - i - 1];
+                assembly_times_line[params -i] = types[assembly_line[params-i]][params-i] * assembly_computers_on_line[params - i];
                 pq.push(make_tuple(params-i, assembly_times_line[params -i] ));
                 assembly_line[params-i-1 ]  = -1;
                 assembly_times_line[params -i-1] = 0;
+                assembly_computers_on_line[params -i-1]  = 0;
             }else{
-                assembly_times_line[params-i-1] =0;//- get<1>(a);
+                assembly_times_line[params-i-1] =0;
                 pq.push(make_tuple(params-i-1, assembly_times_line[params-i-1]));
             }
 
@@ -114,9 +122,12 @@ int compute_cost(vector<int> & data, Config &types, int params){
         */
 
         //add new element if possible
-        if(assembly_line[0] == -1 && idx < data.size() ){
-            assembly_line[0] = data[idx];
-            assembly_times_line[0] = types[data[idx++]][0];
+        if(assembly_line[0] == -1 && idx < data.size()){
+            do{
+                assembly_line[0] = data[idx++];
+                assembly_times_line[0] += types[assembly_line[0]][0];
+                assembly_computers_on_line[0] += 1;
+            }while ( assembly_computers_on_line[0] < computers_on_palet && idx < data.size() && data[idx] == assembly_line[0]);
             pq.push(make_tuple(0,assembly_times_line[0]));
             elements_on_line++;
         }
