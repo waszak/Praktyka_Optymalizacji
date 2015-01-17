@@ -15,6 +15,8 @@ void generate_types(Config &types, int ntypes =17, int params =9){
     types.clear();
     if(ntypes == -1){
         types.push_back({1,1,1});
+        types.push_back({4,4,4});
+        types.push_back({2,2,2});
     }else{
         in_range(i, 0, ntypes){
             vector <int> a = vector <int>();
@@ -25,15 +27,15 @@ void generate_types(Config &types, int ntypes =17, int params =9){
 }
 void generate_data( int n, vector<int > &data, int ntypes=17){
     data.clear();
-    if( n ==-1){
+
         // Jakieœ testy poprawnoœciowe
-        if(ntypes ==1 ){
+        if(ntypes ==-1 ){
             in_range(j,0,10){
-                data.push_back(1);
+                data.push_back(j%3);
             }
         }
         //...
-    }else{
+    else{
         in_range(j,0,n){
             data.push_back( rand()%ntypes);
         }
@@ -188,7 +190,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
             elements_on_line++;
         }
 
-        /*while(need_workers.size()>0){
+        while(need_workers.size()>0){
             int i = need_workers.back();
             if( workers > 0){
                 assembly_workers_on_line_line[i]++;
@@ -200,8 +202,8 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
             else{
                 break;
             }
-        }*/
-        while( workers > 0){
+        }
+       /* while( workers > 0){
             bool need_worker = false;
             int pos = -1;
             for(int i : need_workers){
@@ -218,7 +220,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                 assembly_times_line[pos] /= assembly_workers_on_line_line[pos];
                 pq.push(make_tuple(pos,assembly_times_line[pos]));
             }
-        }
+        }*/
     }
     return total_time;
 }
@@ -264,7 +266,7 @@ void perm_test(){
 
 int main(){
     srand( time( NULL ) );
-    int ntypes= 2/*-1*/, params = 3;
+    int ntypes= -1/*-1*/, params = 3;
 
     Config types = Config();
     generate_types(types, ntypes, params);
