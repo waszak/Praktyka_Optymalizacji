@@ -46,7 +46,8 @@ void generate_permutation(vector<vector<double>> &ant_graph, vector<int> &perm){
     in_range(i, 0, perm.size())
         remaining[i] = i;
 
-    int start = rand() % perm.size();
+    // int start = rand() % perm.size();
+    int start = 0;
     perm[0] = start;
     remaining.erase(remaining.begin()+start);
 
@@ -57,20 +58,26 @@ void generate_permutation(vector<vector<double>> &ant_graph, vector<int> &perm){
         return result;
     };
     in_range(i, 0, perm.size() - 1){
-        double nbrs_sum = sum(ant_graph[i], remaining); // sum of values to remaining neighbours
+        double nbrs_sum = sum(ant_graph[perm[i]], remaining); // sum of values to remaining neighbours
         double mult = 1e4;
-        int r = rand()%int(nbrs_sum * mult);
+        int r = rand()% static_cast<int>(nbrs_sum * mult);
 
         int selected;
         in_range(nbr, 0, remaining.size()){
-            if(ant_graph[perm[i]][remaining[nbr]] * mult < r){
+            int nbr_cost = static_cast<int>(ant_graph[perm[i]][remaining[nbr]] * mult);
+            if(r < nbr_cost){
                 selected = remaining[nbr];
                 remaining.erase(remaining.begin()+nbr);
                 break;
             }
+            r -= nbr_cost;
         }
 
         perm[i+1] = selected;
+
+        cout << "rem: ";
+        for(int rem : remaining) cout << rem << " ";
+        cout << endl;
 
     }
 
@@ -213,19 +220,37 @@ int main(){
         { 0, 1.3, 1.0, 4.5, 2.1, 1.7, 1.2, 2.8},
         { 0, 4.8, 1.5, 1.0, 2.1, 1.8, 2.1, 3.3},
         { 0, 1.7, 4.8, 2.1, 1.0, 1.6, 2,4, 1.9},
-        { 0, 1.3, 1,8, 2.1, 5.2, 1.7, 2.2, 1.65},
-        { 0, 1.7, 1.8, 2.0, 2.2, 1.75, 4.85, 1.9},
-        { 0, 1.9, 2.2, 1.1, 1.65, 2.15, 2.0, 4.18}
+        { 0, 1.3, 1,8, 2.1, 5.2, 1.0, 2.2, 1.65},
+        { 0, 1.7, 1.8, 2.0, 2.2, 1.75, 1.0, 4.6},
+        { 0, 1.9, 2.2, 1.1, 1.65, 2.15, 4.85, 1.0}
     };
 
     for(vector<double> r : ant_graph){
-        for(int c : r) cout << c;
+        for(double c : r) cout << c << " ";
         cout << endl;
     }
 
     //vector<int> perm = vector<int>(gsize);
     vector<int> perm = vector<int>(8);
-    generate_permutation(ant_graph, perm);
+
+    in_range(i, 0, 15){
+        generate_permutation(ant_graph, perm);
+        cout << "perm " << i;
+        for(double val : perm) cout << val << " ";
+        cout << endl;
+
+//        in_range(i, 1, perm.size()){
+//            ant_graph[perm[i-1]][perm[i]] += 0.6;
+//        }
+//        in_range(i, 0, perm.size()){
+//            in_range(j, 0, perm.size()){
+//                if(ant_graph[i][j] > 0.1) ant_graph[i][j] -= 0.1;
+//                else ant_graph[i][j] = 0.01;
+//            }
+//        }
+    }
+
+    //generate_permutation(ant_graph, perm);
 
     return 0;
 }
