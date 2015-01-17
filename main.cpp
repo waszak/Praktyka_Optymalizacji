@@ -40,7 +40,41 @@ void generate_data( int n, vector<int > &data, int ntypes=17){
     }
 }
 
-int compute_cost(vector<int> & data, Config &types, int params, int computers_on_palet=10, int workers = 10){
+void generate_permutation(vector<vector<double>> &ant_graph, vector<int> &perm){
+    // remaining nodes to be selected
+    vector<int> remaining = vector<int>(perm.size());
+    in_range(i, 0, perm.size())
+        remaining[i] = i;
+
+    int start = rand(perm.size());
+    perm[0] = start;
+    remaining.erase(remaining.begin()+start)
+
+    // get sum of values of remaining nodes
+    auto sum = [] (vector<double> nbrs, int &node, vector<int> &rem){
+        double result = 0;
+        for(int nbr : rem) result += nbrs[nbr];
+        return sum;
+    }
+    in_range(i, 0, perm.size() - 1){
+        double nbrs_sum = sum(ant_graph[i], remaining); // sum of values to remaining neighbours
+        double mult = 1e4;
+        int r = rand(nbrs_sum * mult);
+
+        int selected;
+        in_range(nbr, 0, remaining.size()){
+            if(ant_graph[perm[i]][nbr] * mult < r){
+                selected = nbr;
+                break;
+            }
+        }
+
+        perm[i+1] = nbr;
+
+    }
+
+}
+int compute_cost(vector<int> & data, Config &types, int params, int computers_on_palet=10){
     int total_time = 0, elements_on_line = 1, idx =0;
     auto comp = [] (tuple<int,int> &a, tuple<int,int> &b) -> bool { return get<1>(a) < get<1>(b); };
     priority_queue<tuple<int,int>,std::vector<tuple<int,int>>, decltype(comp) > pq (comp);
@@ -166,15 +200,19 @@ int main(){
 
     cout<<"Cost of permutation\n"<< compute_cost(x, types, params)<<endl;
 
-    vector<vector<int>> ant_graph(x.size());
-    in_range(i, 0, ant_graph.size()){
-        ant_graph[i] = vector<int>(x.size(), 1);
+    int gsize = x.size();
+    vector<vector<double>> ant_graph(gsize);
+    in_range(i, 0, gsize){
+        ant_graph[i] = vector<double>(gsize, 1.0);
     }
 
-    for(vector<int> r : ant_graph){
+    for(vector<double> r : ant_graph){
         for(int c : r) cout << c;
         cout << endl;
     }
+
+    vector<int> perm = vector<int>(gsize);
+    generate_permutation(ant_graph, perm);
 
     return 0;
 }
