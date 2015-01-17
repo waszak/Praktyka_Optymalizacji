@@ -46,20 +46,20 @@ void generate_permutation(vector<vector<double>> &ant_graph, vector<int> &perm){
     in_range(i, 0, perm.size())
         remaining[i] = i;
 
-    int start = rand(perm.size());
+    int start = rand() % perm.size();
     perm[0] = start;
-    remaining.erase(remaining.begin()+start)
+    remaining.erase(remaining.begin()+start);
 
     // get sum of values of remaining nodes
-    auto sum = [] (vector<double> nbrs, int &node, vector<int> &rem){
+    auto sum = [] (vector<double> nbrs, vector<int> &rem){
         double result = 0;
         for(int nbr : rem) result += nbrs[nbr];
-        return sum;
-    }
+        return result;
+    };
     in_range(i, 0, perm.size() - 1){
         double nbrs_sum = sum(ant_graph[i], remaining); // sum of values to remaining neighbours
         double mult = 1e4;
-        int r = rand(nbrs_sum * mult);
+        int r = rand()%int(nbrs_sum * mult);
 
         int selected;
         in_range(nbr, 0, remaining.size()){
@@ -69,12 +69,12 @@ void generate_permutation(vector<vector<double>> &ant_graph, vector<int> &perm){
             }
         }
 
-        perm[i+1] = nbr;
+        perm[i+1] = selected;
 
     }
 
 }
-int compute_cost(vector<int> & data, Config &types, int params, int computers_on_palet=10){
+int compute_cost(vector<int> & data, Config &types, int params, int computers_on_palet=10, int workers = 10){
     int total_time = 0, elements_on_line = 1, idx =0;
     auto comp = [] (tuple<int,int> &a, tuple<int,int> &b) -> bool { return get<1>(a) < get<1>(b); };
     priority_queue<tuple<int,int>,std::vector<tuple<int,int>>, decltype(comp) > pq (comp);
