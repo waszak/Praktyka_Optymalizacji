@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <ctime>
+#include <assert.h>
 #define in_range(i, a,b )  for(int i =(a); i < (b); i++)
 
 using namespace std;
@@ -100,12 +101,14 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
     vector<int> assembly_times_line = vector<int>();
     vector<int> assembly_computers_on_line = vector<int>();
     vector<int> assembly_workers_on_line = vector<int>();
+    vector<int> last_time = vector<int>();
     vector<int> need_workers = vector<int>();
 
     assembly_line.resize(params, -1);
     assembly_times_line.resize(params,0);
     assembly_computers_on_line.resize(params,0);
     assembly_workers_on_line.resize(params, 0);
+    last_time.resize(params, 0);
 
     do{
         assembly_line[0] = data[idx++];
@@ -151,6 +154,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
             assembly_times_line[params - 1] = 0;
             workers += assembly_workers_on_line[params - 1];
             assembly_workers_on_line[params - 1] = 0;
+            last_time[params -1] = total_time;
         }
         in_range(i,1, params){
             if(assembly_line[params-i-1] == -1 ){
@@ -173,19 +177,13 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                 assembly_computers_on_line[params -i-1]  = 0;
                 workers += assembly_workers_on_line[params -i - 1];
                 assembly_workers_on_line[params-i - 1] = 0;
+                last_time[params-i -1] = total_time;
             }else{
                 assembly_times_line[params-i-1] =0;
                 pq.push(make_tuple(params-i-1, assembly_times_line[params-i-1]));
             }
 
-        }/*
-        cout<<"****\n";
-        in_range(i,0, params){
-            cout<<assembly_line[i]<<endl;
         }
-        cout<<"****\n";
-        */
-
         //add new element if possible
         if(assembly_line[0] == -1 && idx < data.size()){
             do{
@@ -226,6 +224,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
             }
         }
     }
+    assert(total_time == last_time[params -1]);
     return total_time;
 }
 
