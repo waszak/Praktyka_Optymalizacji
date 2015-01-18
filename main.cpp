@@ -32,6 +32,13 @@ void generate_data( int n, vector<int > &data, int ntypes=17){
         if(ntypes ==-1 ){
             in_range(j,0,7){
                 data.push_back(j%3);
+                data.push_back(j%3);
+                data.push_back(j%3);
+                data.push_back(j%3);
+                /*data.push_back(j%3);
+                data.push_back(j%3);
+                data.push_back(j%3);
+                data.push_back(j%3);*/
             }
         }
         //...
@@ -206,7 +213,15 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
             if (assembly_workers_on_line[pos] == assembly_computers_on_line[pos]){
                 assembly_times_line[pos] /= assembly_workers_on_line[pos];
                 pq.push(make_tuple(pos,assembly_times_line[pos]));
-
+                need_workers.erase(need_workers.begin() + id);
+            }
+        }
+        int id = -1;
+        for(int i : need_workers){
+            id++;
+            if(assembly_workers_on_line[i]!=0){
+                assembly_times_line[i] = (assembly_times_line[i]/ assembly_workers_on_line[i]) + (assembly_times_line[i] %assembly_workers_on_line[i] != 0 )?types[assembly_line[i]][i]:0;
+                pq.push(make_tuple(i,assembly_times_line[i]));
                 need_workers.erase(need_workers.begin() + id);
             }
         }
