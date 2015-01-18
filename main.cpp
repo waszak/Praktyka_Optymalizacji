@@ -30,7 +30,7 @@ void generate_data( int n, vector<int > &data, int ntypes=17){
 
         // Jakieœ testy poprawnoœciowe
         if(ntypes ==-1 ){
-            in_range(j,0,10){
+            in_range(j,0,7){
                 data.push_back(j%3);
             }
         }
@@ -86,7 +86,7 @@ void generate_permutation(vector<vector<double>> &ant_graph, vector<int> &perm){
 }
 int compute_cost(vector<int> & data, Config &types, int params, int computers_on_palet=10, int workers = 10){
     int total_time = 0, elements_on_line = 1, idx =0;
-    auto comp = [] (tuple<int,int> &a, tuple<int,int> &b) -> bool { return get<1>(a) < get<1>(b); };
+    auto comp = [] (tuple<int,int> &a, tuple<int,int> &b) -> bool { return get<1>(a) > get<1>(b); };
     priority_queue<tuple<int,int>,std::vector<tuple<int,int>>, decltype(comp) > pq (comp);
 
     vector<int> assembly_line = vector<int>();
@@ -150,7 +150,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                 continue;
             }
             if(assembly_times_line[params-i-1] > get<1>(a)){
-                assembly_times_line[params-i-1] =- get<1>(a);
+                assembly_times_line[params-i-1] -= get<1>(a);
                 pq.push(make_tuple(params-i-1, assembly_times_line[params-i-1]));
                 continue;
             }
