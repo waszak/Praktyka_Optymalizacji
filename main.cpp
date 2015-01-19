@@ -160,12 +160,12 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
             if(assembly_line[params-i-1] == -1 ){
                 continue;
             }
-            if(assembly_times_line[params-i-1] > get<1>(a)){
+            else if(assembly_times_line[params-i-1] > get<1>(a)){
                 if(assembly_workers_on_line[params- i -1] != 0)assembly_times_line[params-i-1] -= get<1>(a);
                 pq.push(make_tuple(params-i-1, assembly_times_line[params-i-1]));
                 continue;
             }
-            if(assembly_line[params-i ] == -1 &&(assembly_workers_on_line[params-i -1] != 0 || assembly_times_line[params-i -1]==0) ) {
+            else if(assembly_line[params-i ] == -1 &&(assembly_workers_on_line[params-i -1] != 0 || assembly_times_line[params-i -1]==0) ) {
                 assembly_line[params - i] = assembly_line[params-i-1 ];
                 assembly_computers_on_line[params - i] = assembly_computers_on_line[params - i - 1];
                 assembly_times_line[params -i] = types[assembly_line[params-i]][params-i] * assembly_computers_on_line[params - i];
@@ -357,7 +357,7 @@ void vaporize_pheromon(vector<vector<double>> &ant_graph, double &p){
 
 int main(){
     srand( time( NULL ) );
-    int ntypes=/*3*/3, params = 3;
+    int ntypes=/*3*/17, params = 9;
     int computers = 100;
     int countTypes[ntypes]; int p=0;
 
