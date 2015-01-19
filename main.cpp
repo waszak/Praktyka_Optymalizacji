@@ -343,17 +343,15 @@ void perm_test(){
     }
 }
 
-void ant_update(vector<int> &perm, vector<vector<double>> &ant_graph, int &cost){
-    double alpha = 1; // multiplier for pheromon strengthening
-    double beta = 0.05; // pheromon decrease rate;
-    in_range(i, 1, perm.size()){
-        ant_graph[perm[i-1]][perm[i]] += (alpha)*(1.0/cost) + beta;
-    }
-    in_range(i, 0, perm.size()){
-        in_range(j, 0, perm.size()){
-            if(ant_graph[i][j] > beta) ant_graph[i][j] -= beta;
-            else ant_graph[i][j] = beta;
-        }
+void add_pheromon(vector<int> &perm, vector<vector<double>> &ant_graph, int &cost){
+    in_range(i, 1, perm.size())
+        ant_graph[ perm[i-1] ][ perm[i] ] += (1.0 / cost);
+}
+
+void vaporize_pheromon(vector<vector<double>> &ant_graph, double &p){
+    in_range(i, 1, ant_graph.size()){
+        in_range(j, 0, ant_graph.size())
+            ant_graph[i][j] *= (1 - p);
     }
 }
 
@@ -390,28 +388,37 @@ int main(){
         ant_graph[i] = vector<double>(gsize, 1.0);
     }
 
+    int colony = 100;
+    int iter = 30;
+    double vaporize = 0.05;
+
     vector<int> perm = vector<int>(gsize);
     cout<<"Cost of sort "<<compute_cost(x, types, params)<<endl;
     int Min = compute_cost(x, types, params);
     sort(x.begin(), x.end());
-    in_range(i, 0, 2000){
+    in_range(i, 0, iter){
+        cout << "Colony " << i << endl;
+        in_range(j, 0, colony){ // generate ants
 
-        generate_permutation(ant_graph, perm);
+            generate_permutation(ant_graph, perm);
 
-        // using permutation
-        vector<int> p = vector<int>(perm);
-        for(int &i : p){
-            i = x[i];
+            // using permutation
+            vector<int> p = vector<int>(perm);
+            for(int &i : p){
+                i = x[i];
+            }
+            //x = p;
+
+            int cost = compute_cost(p, types, params);
+            cout<<"Cost of permutation: "<< cost <<endl;
+
+            add_pheromon(perm, ant_graph, cost);
+            if(cost < Min){
+                Min = cost;
+            }
         }
-        //x = p;
 
-        int cost = compute_cost(p, types, params);
-        cout<<"Cost of permutation\n"<< cost <<endl;
-
-        ant_update(perm, ant_graph, cost);
-        if(cost < Min){
-            Min = cost;
-        }
+        vaporize_pheromon(ant_graph, vaporize);
     }
     sort(x.begin(), x.end());
     cout<<"Cost of sort "<<compute_cost(x, types, params)<<"  "<<Min<<endl;
