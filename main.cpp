@@ -445,8 +445,9 @@ int main(){
             Min = cost;
         }
     }
+    //sort(x.begin(), x.end());
+    cout<<"Cost of starting perm "<<compute_cost(x, types, params);
     sort(x.begin(), x.end());
-    cout<<"Cost of sort "<<compute_cost(x, types, params)<<"  "<<Min<<endl;
-
+    cout<<"\nCost of the Sort "<<compute_cost(x, types, params)<<"\nBest Result "<<Min<<endl;
     return 0;
 }
