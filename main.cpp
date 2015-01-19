@@ -22,7 +22,7 @@ void generate_types(Config &types, int ntypes =17, int params =9){
     }else{
         in_range(i, 0, ntypes){
             vector <int> a = vector <int>();
-            in_range(j, 0, params) a.push_back(j%5);
+            in_range(j, 0, params) a.push_back(rand()%5);
             types.push_back(a);
         }
     }
@@ -46,7 +46,7 @@ void generate_data( int n, vector<int > &data, int ntypes=17){
         //...
     else{
         in_range(j,0,n){
-            data.push_back( j%ntypes);
+            data.push_back( rand()%ntypes);
         }
     }
 }
@@ -359,8 +359,8 @@ void ant_update(vector<int> &perm, vector<vector<double>> &ant_graph, int &cost)
 
 int main(){
     srand( time( NULL ) );
-    int ntypes=/*3*/-1, params = 3;
-    int computers = 10;
+    int ntypes=/*3*/3, params = 3;
+    int computers = 100;
 
     Config types = Config();
     generate_types(types, ntypes, params);
@@ -391,8 +391,9 @@ int main(){
     }
 
     vector<int> perm = vector<int>(gsize);
-
-    in_range(i, 0, 20){
+    cout<<"Cost of sort "<<compute_cost(x, types, params)<<endl;
+    //sort(x.begin(), x.end());
+    in_range(i, 0, 2000){
 
         generate_permutation(ant_graph, perm);
 
