@@ -407,7 +407,7 @@ int main(){
 
 
     // ant graph
-    int gsize = x.size();
+    int gsize = xx.size();
     vector<vector<double>> ant_graph(gsize);
 
     in_range(i, 0, gsize){
@@ -423,13 +423,21 @@ int main(){
         generate_permutation(ant_graph, perm);
 
         // using permutation
-        vector<int> p = vector<int>(perm);
-        for(int &i : p){
-            i = x[i];
+        vector<tuple<int,int>> p = vector<tuple<int,int>>();
+        for(int &i : perm){
+            p.push_back(xx[i]);
         }
-        //x = p;
+        xxx.clear();
+        for(tuple<int,int> t : p){
+        //cout<<get<0>(t)<<" "<<get<1>(t)<<endl;
+            int r = get<1>(t);
+            while(r > 0){
+                xxx.push_back(get<0>(t));
+                r--;
+            }
+        }
 
-        int cost = compute_cost(p, types, params);
+        int cost = compute_cost(xxx, types, params);
         cout<<"Cost of permutation\n"<< cost <<endl;
 
         ant_update(perm, ant_graph, cost);
