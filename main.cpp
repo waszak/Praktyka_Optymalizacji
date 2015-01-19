@@ -382,7 +382,17 @@ int main(){
     int countTypes[ntypes]; int p=0;
 
     Config types = Config();
-    generate_types(types, ntypes, params);
+    //generate_types(types, ntypes, params);
+    for (int i = 0; i < ntypes; i++){
+		vector <int> a = vector <int>();
+		for (int j = 0; j < params; j++){
+			int d;
+			cin >> d;
+			a.push_back(d);
+		}
+		types.push_back(a);
+	}
+
     cout<<"Types"<<endl;
     for(auto & i : types ){
         for(int j : i){
@@ -402,7 +412,7 @@ int main(){
         //cout<<i<<endl;
         countTypes[i]++;
     }
-    for(int i = 0; i < ntypes; i++){
+    /*for(int i = 0; i < ntypes; i++){
         //cout<<countTypes[i]<<endl;
         while(countTypes[i] >=10){
             countTypes[i] -= 10;
@@ -411,7 +421,11 @@ int main(){
             xx.push_back(make_tuple(i,countTypes[i]));
             countTypes[i]=0;
         }
-    }
+    }*/
+    int b, d;
+	while (cin >> b >> d){
+		xx.push_back(make_tuple(b, d));
+	}
     for(tuple<int,int> t : xx){
         //cout<<get<0>(t)<<" "<<get<1>(t)<<endl;
         int r = get<1>(t);
