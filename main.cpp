@@ -17,12 +17,12 @@ void generate_types(Config &types, int ntypes =17, int params =9){
     types.clear();
     if(ntypes == -1){
         types.push_back({1,1,1});
-        types.push_back({4,4,4});
+        types.push_back({4,2,4});
         types.push_back({2,2,2});
     }else{
         in_range(i, 0, ntypes){
             vector <int> a = vector <int>();
-            in_range(j, 0, params) a.push_back(rand()%5);
+            in_range(j, 0, params) a.push_back(j%5);
             types.push_back(a);
         }
     }
@@ -38,15 +38,15 @@ void generate_data( int n, vector<int > &data, int ntypes=17){
                 data.push_back(j%3);
                 data.push_back(j%3);
                 data.push_back(j%3);
+                /*data.push_back(j%3);
                 data.push_back(j%3);
-                data.push_back(j%3);
-                data.push_back(j%3);
+                data.push_back(j%3);*/
             }
         }
         //...
     else{
         in_range(j,0,n){
-            data.push_back( rand()%ntypes);
+            data.push_back( j%ntypes);
         }
     }
 }
@@ -226,21 +226,40 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                  }*/
 
                  for(int i : need_workers){
-                    id++;
+                    id++;pos =i;
                     if(assembly_workers_on_line[i] == 0){
-                        pos = i;
+                        //pos = i;
                         break;
                     }
-                    if( i != params -1 ){
+                    if( i != params -1 && assembly_line[i+1] != -1 ){
+
                         int d = (assembly_times_line[i] %(assembly_workers_on_line[i] +1) != 0 )?types[assembly_line[i]][i]:0;
                         d = (assembly_times_line[i]/ (assembly_workers_on_line[i] +1)) + d;
-                        if(d < assembly_times_line[i+1]){
-                            pos = i;
+                        int e = assembly_times_line[i+1] ;
+                        if(assembly_times_line[i+1] == 0 && assembly_workers_on_line[i+1] != 0){
+                            e = (assembly_times_line[i+1] %(assembly_workers_on_line[i+1]) != 0 )?types[assembly_line[i+1]][i+1]:0;
+                            e = (assembly_times_line[i+1]/ (assembly_workers_on_line[i+1] )) + e;
+                        }
+                        if(d >= e){
+                            //pos = i;
+                            break;
+                        }
+                    }if ( i != 0 && assembly_line[i -1] != -1){
+                        int d = (assembly_times_line[i] %(assembly_workers_on_line[i] +1) != 0 )?types[assembly_line[i]][i]:0;
+                        d = (assembly_times_line[i]/ (assembly_workers_on_line[i] +1)) + d;
+                        int e = assembly_times_line[i-1] ;
+
+                        if( assembly_workers_on_line[i-1] != 0){
+                            e = (assembly_times_line[i-1] %(assembly_workers_on_line[i-1]) != 0 )?types[assembly_line[i-1]][i-1]:0;
+                            e = (assembly_times_line[i-1]/ (assembly_workers_on_line[i-1] )) + e;
+                        }
+
+                        if(d >= e){
+                            //pos = i;
                             break;
                         }
                     }
                  }
-                 cout<<"ddd"<<" "<<pos<<" "<<id<<endl;
                 /*in_range(i, 0, params-1){
                     if(assembly_line[i] != -1 && assembly_line[i+1] != -1){
                         need_worker = true;
@@ -258,9 +277,10 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                     pos = i;
                 }
             }
-            if(! need_worker && need_workers.size() == 0){
+            if(! need_worker || need_workers.size() == 0){
                 break;
             };
+            //cout<<pos<<"  "<<assembly_workers_on_line[pos]+1<<endl;
             assembly_workers_on_line[pos]++;
             workers--;
             if (assembly_workers_on_line[pos] == assembly_computers_on_line[pos]){
@@ -271,17 +291,16 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
         }
         int id = -1;
         for(int j = 0; j < need_workers.size();j++){
-            int i = need_workers[i];
+            int i = need_workers[j];
             id++;
             if(assembly_workers_on_line[i]!=0){
                 //cout<<"sdasdaas"<<endl;
                 int d = (assembly_times_line[i] %assembly_workers_on_line[i] != 0 )?types[assembly_line[i]][i]:0;
                 assembly_times_line[i] = (assembly_times_line[i]/ assembly_workers_on_line[i]) +d;
                 pq.push(make_tuple(i,assembly_times_line[i]));
-                cout<<id<<" "<<need_workers.size()<<endl;
                 need_workers.erase(need_workers.begin() + id);
+                id--;
                 j--;
-                cout<<"sdasdaas"<<endl;
             }
         }
     }
@@ -344,7 +363,7 @@ void ant_update(vector<int> &perm, vector<vector<double>> &ant_graph, int &cost)
 
 int main(){
     srand( time( NULL ) );
-    int ntypes= -1/*-1*/, params = 3;
+    int ntypes=3/*-1*/, params = 14;
 
     Config types = Config();
     generate_types(types, ntypes, params);
@@ -358,11 +377,11 @@ int main(){
 
     cout<<"Generate Id to type"<<endl;
     vector<int> x = vector<int>();
-    generate_data(10, x, ntypes);
+    generate_data(100, x, ntypes);
     for(int i : x ){
         cout<<i<<endl;
     }
-
+    //sort(x.begin(), x.end());
     cout<<"Cost of permutation\n"<< compute_cost(x, types, params)<<endl;
 
     int gsize = x.size();
