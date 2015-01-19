@@ -271,7 +271,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
         }
         int id = -1;
         for(int j = 0; j < need_workers.size();j++){
-            int i = need_workers[i];
+            int i = need_workers[j];
             id++;
             if(assembly_workers_on_line[i]!=0){
                 //cout<<"sdasdaas"<<endl;
@@ -280,6 +280,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                 pq.push(make_tuple(i,assembly_times_line[i]));
                 cout<<id<<" "<<need_workers.size()<<endl;
                 need_workers.erase(need_workers.begin() + id);
+                id--;
                 j--;
                 cout<<"sdasdaas"<<endl;
             }
