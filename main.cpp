@@ -17,7 +17,7 @@ void generate_types(Config &types, int ntypes =17, int params =9){
     types.clear();
     if(ntypes == -1){
         types.push_back({1,1,1});
-        types.push_back({4,2,4});
+        types.push_back({4,4,4});
         types.push_back({2,2,2});
     }else{
         in_range(i, 0, ntypes){
@@ -36,9 +36,9 @@ void generate_data( int n, vector<int > &data, int ntypes=17){
                 data.push_back(j%3);
                 data.push_back(j%3);
                 data.push_back(j%3);
-                data.push_back(j%3);
-                data.push_back(j%3);
                 /*data.push_back(j%3);
+                data.push_back(j%3);
+                data.push_back(j%3);
                 data.push_back(j%3);
                 data.push_back(j%3);*/
             }
@@ -85,10 +85,6 @@ void generate_permutation(vector<vector<double>> &ant_graph, vector<int> &perm){
         }
 
         perm[i+1] = selected;
-
-        cout << "rem: ";
-        for(int rem : remaining) cout << rem << " ";
-        cout << endl;
 
     }
 
@@ -363,7 +359,8 @@ void ant_update(vector<int> &perm, vector<vector<double>> &ant_graph, int &cost)
 
 int main(){
     srand( time( NULL ) );
-    int ntypes=3/*-1*/, params = 14;
+    int ntypes=/*3*/-1, params = 3;
+    int computers = 10;
 
     Config types = Config();
     generate_types(types, ntypes, params);
@@ -377,13 +374,15 @@ int main(){
 
     cout<<"Generate Id to type"<<endl;
     vector<int> x = vector<int>();
-    generate_data(100, x, ntypes);
+
+    generate_data(computers, x, ntypes);
     for(int i : x ){
         cout<<i<<endl;
     }
     //sort(x.begin(), x.end());
-    cout<<"Cost of permutation\n"<< compute_cost(x, types, params)<<endl;
 
+
+    // ant graph
     int gsize = x.size();
     vector<vector<double>> ant_graph(gsize);
 
@@ -391,9 +390,25 @@ int main(){
         ant_graph[i] = vector<double>(gsize, 1.0);
     }
 
-    //perm_test();
+    vector<int> perm = vector<int>(gsize);
 
-    //generate_permutation(ant_graph, perm);
+    in_range(i, 0, 20){
+
+        generate_permutation(ant_graph, perm);
+
+        // using permutation
+        vector<int> p = vector<int>(perm);
+        for(int &i : p){
+            i = x[i];
+        }
+        x = p;
+
+        int cost = compute_cost(x, types, params);
+        cout<<"Cost of permutation\n"<< cost <<endl;
+
+        ant_update(perm, ant_graph, cost);
+    }
+
 
     return 0;
 }
