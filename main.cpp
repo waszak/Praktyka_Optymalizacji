@@ -359,6 +359,7 @@ int main(){
     srand( time( NULL ) );
     int ntypes=/*3*/3, params = 3;
     int computers = 100;
+    int countTypes[ntypes]; int p=0;
 
     Config types = Config();
     generate_types(types, ntypes, params);
@@ -368,20 +369,43 @@ int main(){
             cout<<j<<", ";
         }
         cout <<endl;
+        countTypes[p++] = 0;
     }
 
     cout<<"Generate Id to type"<<endl;
     vector<int> x = vector<int>();
+    vector<tuple<int, int>> xx = vector <tuple<int,int>>();
+    vector<int> xxx = vector<int>();
 
     generate_data(computers, x, ntypes);
     for(int i : x ){
-        cout<<i<<endl;
+        //cout<<i<<endl;
+        countTypes[i]++;
     }
+    for(int i = 0; i < ntypes; i++){
+        //cout<<countTypes[i]<<endl;
+        while(countTypes[i] >=10){
+            countTypes[i] -= 10;
+            xx.push_back(make_tuple(i,10));
+        }if(countTypes[i]>0){
+            xx.push_back(make_tuple(i,countTypes[i]));
+            countTypes[i]=0;
+        }
+    }
+    for(tuple<int,int> t : xx){
+        //cout<<get<0>(t)<<" "<<get<1>(t)<<endl;
+        int r = get<1>(t);
+        while(r > 0){
+            xxx.push_back(get<0>(t));
+            r--;
+        }
+    }
+    //cin.get();
     //sort(x.begin(), x.end());
 
 
     // ant graph
-    int gsize = x.size();
+    int gsize = xx.size();
     vector<vector<double>> ant_graph(gsize);
 
     in_range(i, 0, gsize){
@@ -395,21 +419,29 @@ int main(){
     vector<int> perm = vector<int>(gsize);
     cout<<"Cost of sort "<<compute_cost(x, types, params)<<endl;
     int Min = compute_cost(x, types, params);
-    sort(x.begin(), x.end());
     in_range(i, 0, iter){
         cout << "Colony " << i << endl;
         in_range(j, 0, colony){ // generate ants
+    //sort(x.begin(), x.end());
 
             generate_permutation(ant_graph, perm);
 
-            // using permutation
-            vector<int> p = vector<int>(perm);
-            for(int &i : p){
-                i = x[i];
+                // using permutation
+            vector<tuple<int,int>> p = vector<tuple<int,int>>();
+            for(int &i : perm){
+                p.push_back(xx[i]);
             }
-            //x = p;
+            xxx.clear();
+            for(tuple<int,int> t : p){
+            //cout<<get<0>(t)<<" "<<get<1>(t)<<endl;
+                int r = get<1>(t);
+                while(r > 0){
+                    xxx.push_back(get<0>(t));
+                    r--;
+                }
+            }
 
-            int cost = compute_cost(p, types, params);
+            int cost = compute_cost(xxx, types, params);
             cout<<"Cost of permutation: "<< cost <<endl;
 
             add_pheromon(perm, ant_graph, cost);
@@ -420,8 +452,9 @@ int main(){
 
         vaporize_pheromon(ant_graph, vaporize);
     }
+    //sort(x.begin(), x.end());
+    cout<<"Cost of starting perm "<<compute_cost(x, types, params);
     sort(x.begin(), x.end());
-    cout<<"Cost of sort "<<compute_cost(x, types, params)<<"  "<<Min<<endl;
-
+    cout<<"\nCost of the Sort "<<compute_cost(x, types, params)<<"\nBest Result "<<Min<<endl;
     return 0;
 }
