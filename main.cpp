@@ -166,7 +166,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                 pq.push(make_tuple(params-i-1, assembly_times_line[params-i-1]));
                 continue;
             }
-            if(assembly_line[params-i ] == -1 &&(assembly_workers_on_line[params-i -1] != 0 || assembly_times_line[params-i -1]==0) ) {
+            else if(assembly_line[params-i ] == -1 &&(assembly_workers_on_line[params-i -1] != 0 || assembly_times_line[params-i -1]==0) ) {
                 assembly_line[params - i] = assembly_line[params-i-1 ];
                 assembly_computers_on_line[params - i] = assembly_computers_on_line[params - i - 1];
                 assembly_times_line[params -i] = types[assembly_line[params-i]][params-i] * assembly_computers_on_line[params - i];
@@ -188,6 +188,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
             }
 
         }
+
         //add new element if possible
         if(assembly_line[0] == -1 && idx < data.size()){
             do{
@@ -199,7 +200,17 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
             elements_on_line++;
         }
     //cout << "Before orkers loop...\n";
+        for(int i = 0; i < need_workers.size(); i++){
+            if( assembly_line[ need_workers[i] ] == -1){
+                workers+= assembly_workers_on_line[ need_workers[i] ];
+                assembly_workers_on_line[ need_workers[i] ] = 0;
+                need_workers.erase(need_workers.begin() + i);
+            }
+        }
+
         while( workers > 0){
+
+        //cout << "Workers (" << workers << ")\n";
             bool need_worker = false;
             int pos = -1;int id = -1;
             sort(need_workers.begin(), need_workers.end());
@@ -224,6 +235,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                  }*/
 
                  for(int i : need_workers){
+           //      cout << "nw -- " << i << "\n";
                     id++;pos =i;
                     if(assembly_workers_on_line[i] == 0){
                         //pos = i;
@@ -266,16 +278,16 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                 }*/
                 if(pos != -1)need_worker = true;
             }
-            if(pos == -1)
-            for(int i : need_workers){
-                id++;
-                if(need_worker && i == pos){
-                    break;
-                }else if(!need_worker ){
-                    pos = i;
-                }
-            }
-            if(! need_worker || need_workers.size() == 0){
+
+//            for(int i : need_workers){
+//                id++;
+//                if(need_worker && i == pos){
+//                    break;
+//                }else if(!need_worker ){
+//                    pos = i;
+//                }
+//            }
+            if(! need_worker || need_workers.size() == 0 || pos == -1){
                 break;
             };
             //cout<<pos<<"  "<<assembly_workers_on_line[pos]+1<<endl;
@@ -286,6 +298,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                 pq.push(make_tuple(pos,assembly_times_line[pos]));
                 need_workers.erase(need_workers.begin() + id);
             }
+
         }
         int id = -1;
 
@@ -304,6 +317,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                 j--;
             }
         }
+
     }
     assert(total_time == last_time[params -1]);
     return total_time;
@@ -362,7 +376,8 @@ void vaporize_pheromon(vector<vector<double>> &ant_graph, double &p){
 
 int main(){
     srand( time( NULL ) );
-    int ntypes=/*3*/10, params = 9;
+
+    int ntypes=/*3*/17, params = 9;
     int computers = 100;
     int countTypes[ntypes]; int p=0;
 
