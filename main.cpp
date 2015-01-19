@@ -419,7 +419,12 @@ int main(){
     vector<int> perm = vector<int>(gsize);
     cout<<"Cost of sort "<<compute_cost(x, types, params)<<endl;
     int Min = compute_cost(x, types, params);
+
+    vector<vector<int>> ants;
+    vector<int> costs;
+
     in_range(i, 0, iter){
+
         cout << "Colony " << i << endl;
         in_range(j, 0, colony){ // generate ants
     //sort(x.begin(), x.end());
@@ -444,13 +449,25 @@ int main(){
             int cost = compute_cost(xxx, types, params);
             cout<<"Cost of permutation: "<< cost <<endl;
 
+
+            ants.emplace_back(perm);
+            costs.push_back(cost);
+
+            /*
             add_pheromon(perm, ant_graph, cost);
+            */
             if(cost < Min){
                 Min = cost;
             }
         }
 
+        in_range(i, 0, ants.size())
+            add_pheromon(ants[i], ant_graph, costs[i]);
+
         vaporize_pheromon(ant_graph, vaporize);
+
+        ants.clear();
+        costs.clear();
     }
     //sort(x.begin(), x.end());
     cout<<"Cost of starting perm "<<compute_cost(x, types, params);
