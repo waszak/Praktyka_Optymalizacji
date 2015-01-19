@@ -119,6 +119,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
     pq.push(make_tuple(0,assembly_times_line[0]));
 
     while( elements_on_line > 0){
+    //cout << "Loop through line...\n";
         //Print how out line looks atm
         //cin.get();
         /*cout<<"-------("<<idx<<", "<<elements_on_line<<", "<<workers<<")\n";
@@ -160,7 +161,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
             if(assembly_line[params-i-1] == -1 ){
                 continue;
             }
-            if(assembly_times_line[params-i-1] > get<1>(a)){
+            else if(assembly_times_line[params-i-1] > get<1>(a)){
                 if(assembly_workers_on_line[params- i -1] != 0)assembly_times_line[params-i-1] -= get<1>(a);
                 pq.push(make_tuple(params-i-1, assembly_times_line[params-i-1]));
                 continue;
@@ -171,6 +172,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                 assembly_times_line[params -i] = types[assembly_line[params-i]][params-i] * assembly_computers_on_line[params - i];
 
                 need_workers.push_back(params -i);
+
 
                 assembly_line[params-i-1 ]  = -1;
                 assembly_times_line[params -i-1] = 0;
@@ -196,7 +198,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
             need_workers.push_back(0);
             elements_on_line++;
         }
-
+    //cout << "Before orkers loop...\n";
         while( workers > 0){
             bool need_worker = false;
             int pos = -1;int id = -1;
@@ -286,7 +288,10 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
             }
         }
         int id = -1;
+
+    //cout << "Assembly workers...\n";
         for(int j = 0; j < need_workers.size();j++){
+    //cout << "assembly (" << j << ")\n";
             int i = need_workers[j];
             id++;
             if(assembly_workers_on_line[i]!=0){
@@ -357,7 +362,7 @@ void vaporize_pheromon(vector<vector<double>> &ant_graph, double &p){
 
 int main(){
     srand( time( NULL ) );
-    int ntypes=/*3*/3, params = 3;
+    int ntypes=/*3*/10, params = 9;
     int computers = 100;
     int countTypes[ntypes]; int p=0;
 
