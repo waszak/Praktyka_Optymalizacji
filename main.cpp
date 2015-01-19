@@ -289,11 +289,11 @@ int main(){
 
     int gsize = x.size();
     vector<vector<double>> ant_graph(gsize);
-    double alpha = 10; // multiplier for pheromon strengthening
+    double alpha = 1; // multiplier for pheromon strengthening
     double beta = 0.05; // pheromon decrease rate;
-//    in_range(i, 0, gsize){
-//        ant_graph[i] = vector<double>(gsize, 1.0);
-//    }
+    in_range(i, 0, gsize){
+        ant_graph[i] = vector<double>(gsize, 1.0);
+    }
 
     //perm_test();
 
