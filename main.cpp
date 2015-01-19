@@ -328,6 +328,20 @@ void perm_test(){
     }
 }
 
+void ant_update(vector<int> &perm, vector<vector<double>> &ant_graph, int &cost){
+    double alpha = 1; // multiplier for pheromon strengthening
+    double beta = 0.05; // pheromon decrease rate;
+    in_range(i, 1, perm.size()){
+        ant_graph[perm[i-1]][perm[i]] += (alpha+beta)*(1.0/cost);
+    }
+    in_range(i, 0, perm.size()){
+        in_range(j, 0, perm.size()){
+            if(ant_graph[i][j] > beta) ant_graph[i][j] -= beta;
+            else ant_graph[i][j] = beta;
+        }
+    }
+}
+
 int main(){
     srand( time( NULL ) );
     int ntypes= -1/*-1*/, params = 3;
@@ -353,8 +367,7 @@ int main(){
 
     int gsize = x.size();
     vector<vector<double>> ant_graph(gsize);
-    double alpha = 1; // multiplier for pheromon strengthening
-    double beta = 0.05; // pheromon decrease rate;
+
     in_range(i, 0, gsize){
         ant_graph[i] = vector<double>(gsize, 1.0);
     }
