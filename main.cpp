@@ -57,8 +57,8 @@ void generate_permutation(vector<vector<double>> &ant_graph, vector<int> &perm){
     in_range(i, 0, perm.size())
         remaining[i] = i;
 
-    // int start = rand() % perm.size();
-    int start = 0;
+    int start = rand() % perm.size();
+    //int start = 0;
     perm[0] = start;
     remaining.erase(remaining.begin()+start);
 
@@ -347,7 +347,7 @@ void ant_update(vector<int> &perm, vector<vector<double>> &ant_graph, int &cost)
     double alpha = 1; // multiplier for pheromon strengthening
     double beta = 0.05; // pheromon decrease rate;
     in_range(i, 1, perm.size()){
-        ant_graph[perm[i-1]][perm[i]] += (alpha+beta)*(1.0/cost);
+        ant_graph[perm[i-1]][perm[i]] += (alpha)*(1.0/cost) + beta;
     }
     in_range(i, 0, perm.size()){
         in_range(j, 0, perm.size()){
@@ -392,7 +392,7 @@ int main(){
 
     vector<int> perm = vector<int>(gsize);
     cout<<"Cost of sort "<<compute_cost(x, types, params)<<endl;
-    //sort(x.begin(), x.end());
+    sort(x.begin(), x.end());
     in_range(i, 0, 2000){
 
         generate_permutation(ant_graph, perm);
