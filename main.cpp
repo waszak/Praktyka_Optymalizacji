@@ -36,11 +36,11 @@ void generate_data( int n, vector<int > &data, int ntypes=17){
                 data.push_back(j%3);
                 data.push_back(j%3);
                 data.push_back(j%3);
-                /*data.push_back(j%3);
                 data.push_back(j%3);
                 data.push_back(j%3);
                 data.push_back(j%3);
-                data.push_back(j%3);*/
+                data.push_back(j%3);
+                data.push_back(j%3);
             }
         }
         //...
@@ -121,13 +121,13 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
     while( elements_on_line > 0){
         //Print how out line looks atm
         //cin.get();
-        cout<<"-------("<<idx<<", "<<elements_on_line<<", "<<workers<<")\n";
+        /*cout<<"-------("<<idx<<", "<<elements_on_line<<", "<<workers<<")\n";
         int j = 0;
         for(int i: assembly_line){
             cout<<((i == -1)?-1:assembly_times_line[j])<<" "<<assembly_workers_on_line[j]<<endl;
             j++;
         }
-        cout<<"-------\n";
+        cout<<"-------\n";*/
         //We are looking for time of first element who can move
         //because other platform can be blocked.
         tuple<int, int> a = make_tuple(-1, -1);
@@ -141,7 +141,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                 break;
             }
         }
-        cout<<get<1>(a)<<" "<<assembly_line[get<0>(a)]<<endl;
+        //cout<<get<1>(a)<<" "<<assembly_line[get<0>(a)]<<endl;
         total_time += get<1>(a);
 
         // we move elements. We need to check all elements from Right to Left.
@@ -401,14 +401,15 @@ int main(){
         for(int &i : p){
             i = x[i];
         }
-        x = p;
+        //x = p;
 
-        int cost = compute_cost(x, types, params);
+        int cost = compute_cost(p, types, params);
         cout<<"Cost of permutation\n"<< cost <<endl;
 
         ant_update(perm, ant_graph, cost);
     }
-
+    sort(x.begin(), x.end());
+    cout<<"Cost of sort "<<compute_cost(x, types, params)<<endl;
 
     return 0;
 }
