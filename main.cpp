@@ -258,7 +258,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                     pos = i;
                 }
             }
-            if(! need_worker && need_workers.size() == 0){
+            if(! need_worker || need_workers.size() == 0){
                 break;
             };
             assembly_workers_on_line[pos]++;
