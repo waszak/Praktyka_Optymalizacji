@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <ctime>
 #include <assert.h>
+#include <algorithm>
 #define in_range(i, a,b )  for(int i =(a); i < (b); i++)
 
 using namespace std;
@@ -36,10 +37,10 @@ void generate_data( int n, vector<int > &data, int ntypes=17){
                 data.push_back(j%3);
                 data.push_back(j%3);
                 data.push_back(j%3);
-                /*data.push_back(j%3);
                 data.push_back(j%3);
                 data.push_back(j%3);
-                data.push_back(j%3);*/
+                data.push_back(j%3);
+                data.push_back(j%3);
             }
         }
         //...
@@ -127,7 +128,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
         cout<<"-------("<<idx<<", "<<elements_on_line<<", "<<workers<<")\n";
         int j = 0;
         for(int i: assembly_line){
-            cout<<((i == -1)?-1:assembly_times_line[j])<<" "<< i<<" "<<assembly_workers_on_line[j]<<endl;
+            cout<<((i == -1)?-1:assembly_times_line[j])<<" "<<assembly_workers_on_line[j]<<endl;
             j++;
         }
         cout<<"-------\n";
@@ -137,7 +138,7 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
         while(!pq.empty()){
             a = pq.top();
             pq.pop();
-            if(get<0>(a) + 1 == params || assembly_line[get<0>(a) + 1 ] == -1){
+            if(get<1>(a) != 0/*get<0>(a) + 1 == params || assembly_line[get<0>(a) + 1 ] == -1*/){
                 while(!pq.empty()){
                     pq.pop(); // faster would be replacing with new queue.
                 }
@@ -155,17 +156,20 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
             workers += assembly_workers_on_line[params - 1];
             assembly_workers_on_line[params - 1] = 0;
             last_time[params -1] = total_time;
+        }else if(assembly_line[params-1] != -1 && assembly_workers_on_line[params -1] != 0 ){
+            assembly_times_line[params-1] -= get<1>(a);
+            pq.push(make_tuple(params-1, assembly_times_line[params-1]));
         }
         in_range(i,1, params){
             if(assembly_line[params-i-1] == -1 ){
                 continue;
             }
             if(assembly_times_line[params-i-1] > get<1>(a)){
-                assembly_times_line[params-i-1] -= get<1>(a);
+                if(assembly_workers_on_line[params- i -1] != 0)assembly_times_line[params-i-1] -= get<1>(a);
                 pq.push(make_tuple(params-i-1, assembly_times_line[params-i-1]));
                 continue;
             }
-            if(assembly_line[params-i ] == -1) {
+            if(assembly_line[params-i ] == -1 &&(assembly_workers_on_line[params-i -1] != 0 || assembly_times_line[params-i -1]==0) ) {
                 assembly_line[params - i] = assembly_line[params-i-1 ];
                 assembly_computers_on_line[params - i] = assembly_computers_on_line[params - i - 1];
                 assembly_times_line[params -i] = types[assembly_line[params-i]][params-i] * assembly_computers_on_line[params - i];
@@ -178,8 +182,10 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
                 workers += assembly_workers_on_line[params -i - 1];
                 assembly_workers_on_line[params-i - 1] = 0;
                 last_time[params-i -1] = total_time;
-            }else{
+            }else if(assembly_workers_on_line[params- i -1] != 0){
                 assembly_times_line[params-i-1] =0;
+                workers += assembly_workers_on_line[params -i - 1];
+                assembly_workers_on_line[params-i - 1] = 0;
                 pq.push(make_tuple(params-i-1, assembly_times_line[params-i-1]));
             }
 
@@ -198,12 +204,61 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
         while( workers > 0){
             bool need_worker = false;
             int pos = -1;int id = -1;
-            for(int i : need_workers){
-                pos = i;
-                id++;
-                need_worker = true;
+            sort(need_workers.begin(), need_workers.end());
+            std::reverse(need_workers.begin(),need_workers.end());
+            /*in_range(i, 0, params-1){
+                if(assembly_line[i] != -1 && assembly_workers_on_line[i] == 0 && assembly_line[i+1] == -1){
+                    need_worker = true;
+                    pos = i;
+                }
+            }*/
+            if(!need_worker){
+                int maxi = -1;
+                int id_max = -1;
+                id=-1;
+                 /*for(int i : need_workers){
+                     id++;
+                     if (maxi < i){
+                        maxi = i;
+                        pos = i;
+                        need_worker = true;
+                     }
+                 }*/
+
+                 for(int i : need_workers){
+                    id++;
+                    if(assembly_workers_on_line[i] == 0){
+                        pos = i;
+                        break;
+                    }
+                    if( i != params -1 ){
+                        int d = (assembly_times_line[i] %(assembly_workers_on_line[i] +1) != 0 )?types[assembly_line[i]][i]:0;
+                        d = (assembly_times_line[i]/ (assembly_workers_on_line[i] +1)) + d;
+                        if(d < assembly_times_line[i+1]){
+                            pos = i;
+                            break;
+                        }
+                    }
+                 }
+                 cout<<"ddd"<<" "<<pos<<" "<<id<<endl;
+                /*in_range(i, 0, params-1){
+                    if(assembly_line[i] != -1 && assembly_line[i+1] != -1){
+                        need_worker = true;
+                        pos = i;
+                    }
+                }*/
+                if(pos != -1)need_worker = true;
             }
-            if(! need_worker){
+            if(pos == -1)
+            for(int i : need_workers){
+                id++;
+                if(need_worker && i == pos){
+                    break;
+                }else if(!need_worker ){
+                    pos = i;
+                }
+            }
+            if(! need_worker && need_workers.size() == 0){
                 break;
             };
             assembly_workers_on_line[pos]++;
@@ -215,12 +270,18 @@ int compute_cost(vector<int> & data, Config &types, int params, int computers_on
             }
         }
         int id = -1;
-        for(int i : need_workers){
+        for(int j = 0; j < need_workers.size();j++){
+            int i = need_workers[i];
             id++;
             if(assembly_workers_on_line[i]!=0){
-                assembly_times_line[i] = (assembly_times_line[i]/ assembly_workers_on_line[i]) + (assembly_times_line[i] %assembly_workers_on_line[i] != 0 )?types[assembly_line[i]][i]:0;
+                //cout<<"sdasdaas"<<endl;
+                int d = (assembly_times_line[i] %assembly_workers_on_line[i] != 0 )?types[assembly_line[i]][i]:0;
+                assembly_times_line[i] = (assembly_times_line[i]/ assembly_workers_on_line[i]) +d;
                 pq.push(make_tuple(i,assembly_times_line[i]));
+                cout<<id<<" "<<need_workers.size()<<endl;
                 need_workers.erase(need_workers.begin() + id);
+                j--;
+                cout<<"sdasdaas"<<endl;
             }
         }
     }
