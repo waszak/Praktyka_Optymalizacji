@@ -392,6 +392,7 @@ int main(){
 
     vector<int> perm = vector<int>(gsize);
     cout<<"Cost of sort "<<compute_cost(x, types, params)<<endl;
+    int Min = compute_cost(x, types, params);
     sort(x.begin(), x.end());
     in_range(i, 0, 2000){
 
@@ -408,9 +409,12 @@ int main(){
         cout<<"Cost of permutation\n"<< cost <<endl;
 
         ant_update(perm, ant_graph, cost);
+        if(cost < Min){
+            Min = cost;
+        }
     }
     sort(x.begin(), x.end());
-    cout<<"Cost of sort "<<compute_cost(x, types, params)<<endl;
+    cout<<"Cost of sort "<<compute_cost(x, types, params)<<"  "<<Min<<endl;
 
     return 0;
 }
