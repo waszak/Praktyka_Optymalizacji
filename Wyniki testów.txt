@@ -1,4 +1,83 @@
-Test 1. 100 losowych danych
+10-Palet, 10 -workerów
+
+Test 1. 40 losowych danych
+Kolonia 100, iteracji 30
+Cost of the Sort 111
+Best Result 107
+Best of Brute Force 99
+
+Test 2. 80 losowych danych
+Cost of the Sort 239
+Best Result 203
+Best of Brute Force 188
+
+Test 3. 100 losowych danych
+Cost of the sort 310
+Best result 267
+Best of the Brute Force 272
+
+Kolonia 100, iteracji 30
+Test 4. 100 losowych danych
 Cost of the Sort 263
 Best Result 244
-Best of Brute Force 219
+Best of Brute Force 219'
+
+
+15-Palet, 15- workerów
+
+Test 1. 40 losowych danych
+Kolonia 100, iteracji 30
+Cost of the Sort 98
+Best Result 82
+Best of Brute Force 77
+
+
+Test 2. 80 losowych danych
+Cost of the Sort 159
+Best Result 144
+Best of Brute Force 131
+
+
+Test 3. 100 losowych danych
+Cost of the sort 203
+Best result 192
+Best of the Brute Force 173
+
+
+Test 4. 100 losowych danych
+Cost of the Sort 195
+Best Result 179
+Best of Brute Force 157
+
+
+
+20-Palet, 20-workerów
+
+Test 1. 40 losowych danych
+Kolonia 100, iteracji 30
+Cost of the Sort 77
+Best Result 74
+Best of Brute Force 72
+
+
+Test 2. 80 losowych danych
+Cost of the Sort 133
+Best Result 111
+Best of Brute Force 104
+
+
+Test 3. 100 losowych danych
+Cost of the sort 169
+Best result 157
+Best of the Brute Force 143
+
+
+Test 4. 100 losowych danych
+Cost of the Sort 147
+Best Result 133
+Best of Brute Force 124
+
+
+
+
+
