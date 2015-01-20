@@ -339,6 +339,10 @@ void vaporize_pheromon(vector<vector<double>> &ant_graph, double &p){
     }
 }
 
+bool cmp(const tuple<int, int> &a, const tuple<int, int> &b){
+    return get<0>(a) < get<0>(b) || (get<0>(a) == get<0>(b) && get<1>(a) > get<1>(b));
+}
+
 int main(){
     srand( time( NULL ) );
 
@@ -431,7 +435,7 @@ int main(){
     vector<int> perm = vector<int>(gsize);
     cout<<"Cost of sort "<<compute_cost(x, types, params)<<endl;
     int Min = compute_cost(x, types, params);
-
+    int Min_Brute = Min;
     vector<vector<int>> ants;
     vector<int> costs;
 
@@ -485,5 +489,20 @@ int main(){
     cout<<"Cost of starting perm "<<compute_cost(x, types, params);
     sort(x.begin(), x.end());
     cout<<"\nCost of the Sort "<<compute_cost(x, types, params)<<"\nBest Result "<<Min<<endl;
+
+    do {
+        for(tuple<int,int> t : xx){
+                int r = get<1>(t);
+                while(r > 0){
+                    xxx.push_back(get<0>(t));
+                    r--;
+                }
+        }
+        int cost = compute_cost(xxx, types, params);
+        if( cost < Min_Brute){
+            Min_Brute = cost;
+        }
+    } while (next_permutation(xx.begin(), xx.end(),cmp ));
+    cout<<"We get with brute force: "<<Min_Brute<<endl;
     return 0;
 }
