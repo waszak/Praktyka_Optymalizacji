@@ -1,0 +1,4 @@
+Test 1. 100 losowych danych
+Cost of the Sort 263
+Best Result 244
+Best of Brute Force 219
