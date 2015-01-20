@@ -435,7 +435,7 @@ int main(){
     vector<int> perm = vector<int>(gsize);
     cout<<"Cost of sort "<<compute_cost(x, types, params)<<endl;
     int Min = compute_cost(x, types, params);
-    int Min_Brute = Min;
+    int Min_Brute = Min*100;
     vector<vector<int>> ants;
     vector<int> costs;
 
@@ -491,6 +491,7 @@ int main(){
     cout<<"\nCost of the Sort "<<compute_cost(x, types, params)<<"\nBest Result "<<Min<<endl;
 
     do {
+        xxx.clear();
         for(tuple<int,int> t : xx){
                 int r = get<1>(t);
                 while(r > 0){
@@ -501,6 +502,7 @@ int main(){
         int cost = compute_cost(xxx, types, params);
         if( cost < Min_Brute){
             Min_Brute = cost;
+            cout<<cost<<endl;
         }
     } while (next_permutation(xx.begin(), xx.end(),cmp ));
     cout<<"We get with brute force: "<<Min_Brute<<endl;
