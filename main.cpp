@@ -390,8 +390,13 @@ int main(){
     }*/
     int b, d;
 	while (cin >> b >> d){
-        cout<<b<<" "<<d;
-		xx.push_back(make_tuple(b, d));
+        while(d > 10){
+            xx.push_back(make_tuple(b, 10));
+            d -= 10;
+        }
+        if( d >0){
+            xx.push_back(make_tuple(b, d));
+        }
 	}
 
     for(tuple<int,int> t : xx){
