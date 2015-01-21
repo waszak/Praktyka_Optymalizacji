@@ -16,12 +16,10 @@ Cost of the sort 310
 Best result 267
 Best of the Brute Force 272
 
-Kolonia 100, iteracji 30
-Test 4. 100 losowych danych
-Cost of the Sort 263
-Best Result 244
-Best of Brute Force 219'
-
+Test 4. 100 losowych danych(Hard)
+Cost of the Sort 6961
+Best Result 5750
+Best of the Brute Force  5359
 
 15-Palet, 15- workerów
 
@@ -44,10 +42,10 @@ Best result 192
 Best of the Brute Force 173
 
 
-Test 4. 100 losowych danych
-Cost of the Sort 195
-Best Result 179
-Best of Brute Force 157
+Test 4. 100 losowych danych Hard
+Cost of the Sort 4383
+Best Result 4231
+Best of Brute Force 3700
 
 
 
@@ -72,10 +70,42 @@ Best result 157
 Best of the Brute Force 143
 
 
-Test 4. 100 losowych danych
-Cost of the Sort 147
-Best Result 133
-Best of Brute Force 124
+Test 4. 100 losowych danych Hard
+Cost of the Sort 3828
+Best Result 3134
+Best of Brute Force 2863
+
+
+
+
+Iteracje 30:
+5783
+
+Iteracje 50:
+5251
+
+iteracje 70
+5209
+
+Iteracje 100:
+5193
+
+
+Colonie 30:
+5216
+
+Colonie 50:
+5246
+
+Colonie 70
+5214
+
+Colonie 100:
+5172
+
+
+
+
 
 
 
