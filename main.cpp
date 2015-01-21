@@ -335,7 +335,7 @@ void add_pheromon(vector<int> &perm, vector<vector<double>> &ant_graph, int &cos
 void vaporize_pheromon(vector<vector<double>> &ant_graph, double &p){
     in_range(i, 1, ant_graph.size()){
         in_range(j, 0, ant_graph.size())
-            ant_graph[i][j] *= (1 - p);
+            ant_graph[i][j] = floorf( ant_graph[i][j] * (1 - p) * 1e5 ) / 1e5;
     }
 }
 
@@ -429,7 +429,7 @@ int main(){
     }
 
     int colony = 100;
-    int iter = 30;
+    int iter = 300;
     double vaporize = 0.05;
 
     vector<int> perm = vector<int>(gsize);
@@ -441,7 +441,7 @@ int main(){
 
     in_range(i, 0, iter){
 
-        cout << "Colony " << i << endl;
+//        cout << "Colony " << i << endl;
         in_range(j, 0, colony){ // generate ants
     //sort(x.begin(), x.end());
 
@@ -463,7 +463,7 @@ int main(){
             }
 
             int cost = compute_cost(xxx, types, params);
-            cout<<"Cost of permutation: "<< cost <<endl;
+//            cout<<"Cost of permutation: "<< cost <<endl;
 
 
             ants.emplace_back(perm);
